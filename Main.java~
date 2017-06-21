@@ -1,0 +1,185 @@
+//Дата начала - 11.03.17; Дата первого выхода - 17.05.17
+
+import javax.swing.*;
+//Импорт всей библиотеки Swing
+import java.awt.FlowLayout;
+//Импорт Layout
+import java.awt.BorderLayout;
+//Импорт Layout
+import java.awt.event.*;
+//Импорт Слушателей
+import java.awt.Component;
+//Импорт компонентов
+import javax.swing.JFileChooser;
+//Импорт Окна для открытия файлов
+import javax.swing.filechooser.FileNameExtensionFilter;
+//Импорт фильтра
+import java.io.*;
+//Импорт io
+import java.lang.reflect.InvocationTargetException;
+import javax.swing.text.*;
+  
+  
+public class Main extends JFrame
+{ 
+  private static final long serialVersionUID=1L;
+   JTextArea textArea;
+  
+  public static void main(String[] args) 
+  { 
+    new Main().setVisible(true);
+  }
+  
+  private Main()
+  {
+   createGui();
+  }
+  
+  public void createGui()
+  {
+    setTitle("ZZ Text Editor 1.0");
+    setSize(1000,600); //размер окна
+    setResizable(true); //если выбрать true,то размер окна можно изменить
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    
+     textArea = new JTextArea();
+   getContentPane().add(new JScrollPane(textArea)); 
+  
+   createMenu();
+  }
+  
+                                                       //Меню и функции кнопок
+  
+  public void createMenu()
+  {
+JMenuBar menuBar;
+JMenu menu, submenu;
+JMenuItem menuItem;
+JRadioButtonMenuItem rbMenuItem;
+JCheckBoxMenuItem cbMenuItem;
+
+//СОздаем меню
+menuBar = new JMenuBar();
+
+//Билдим первое меню
+menu = new JMenu("Файл");
+
+//группа JMenuItems
+menuBar.add(menu);
+menuItem = new JMenuItem("Сохранить");
+menuItem.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
+menu.add(menuItem);
+menuItem.addActionListener(new ButtonFunction1());
+
+menuItem = new JMenuItem("Открыть");
+menu.add(menuItem);
+menuItem.addActionListener(new ButtonFunction());
+
+
+menuItem = new JMenuItem("Сохранить как");
+menu.add(menuItem);
+
+
+//сабменю
+menu.addSeparator();
+submenu = new JMenu("Прочее");
+
+menuItem = new JMenuItem("Обо мне");
+submenu.add(menuItem);
+menuItem.addActionListener(new ButtonFunction2());
+
+menuItem = new JMenuItem("Еще проект");
+submenu.add(menuItem);
+menu.add(submenu);
+
+//Билдим следующее меню в глобальном меню
+menu = new JMenu("Правка");
+menu.getAccessibleContext().setAccessibleDescription("ъъъъъ");
+menuBar.add(menu);
+
+menuItem = new JMenuItem("Хранилище");
+menu.add(menuItem);
+
+menuItem = new JMenuItem("Плагины");
+menu.add(menuItem);
+
+
+this.setJMenuBar(menuBar);
+  }
+  
+  class ButtonFunction implements ActionListener //Функция Открытия
+ {
+  public void actionPerformed(ActionEvent event)
+   {
+    JFileChooser chooser=new JFileChooser();
+           chooser.setFileFilter(new FileNameExtensionFilter("Text/Code Files (txt, ltx, script, zz)", "txt", "ltx", "script", "zz"));
+            chooser.setCurrentDirectory(new java.io.File("user.home"));
+             chooser.setDialogTitle("Выберите нужный Вам файл");
+              chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser.setDialogType(JFileChooser.OPEN_DIALOG);  // выбрать тип диалога Open или Save
+                  if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+              {
+                    try
+                    {
+                 FileReader fileReader = new FileReader(chooser.getSelectedFile());
+                      BufferedReader reader = new BufferedReader(fileReader);
+                      String line = null;
+                      String text="";
+                      while((line=reader.readLine())!=null)
+                      {
+                        System.out.print(line);
+                        text=text+line+'\n';
+                         textArea.setText(text);
+                      }
+                      reader.close();
+                    }
+                    catch (IOException ex)
+                    {
+                      
+                    }  
+              }    
+  }
+ }
+
+  class ButtonFunction1 implements ActionListener //Функция Сохранения
+  {
+    public void actionPerformed(ActionEvent event)
+    {
+      JFileChooser chooser_1 = new JFileChooser();
+       chooser_1.setFileFilter(new FileNameExtensionFilter("Text/Code Files (txt, ltx, script, zz)", "txt", "ltx", "script", "zz"));
+            chooser_1.setCurrentDirectory(new java.io.File("user.home"));
+             chooser_1.setDialogTitle("Сохраните нужный Вам файл");
+              chooser_1.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser_1.setDialogType(JFileChooser.SAVE_DIALOG);  // выбрать тип диалога Open или Save
+                  if (chooser_1.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
+                  {
+                    try
+                    {  
+                      FileOutputStream fileStream = new FileOutputStream(chooser_1.getSelectedFile());  
+                     ObjectOutputStream os = new ObjectOutputStream(fileStream);  
+                     os.writeObject('\n'); 
+                    }  
+                    catch (IOException e) 
+                    {
+        
+                    }  
+                  }             
+    }
+  }
+  
+  class ButtonFunction2 implements ActionListener
+  {
+    public void actionPerformed(ActionEvent event)
+    {
+      JFrame frame = new JFrame();
+      frame.setTitle("Обо Мне");
+      frame.setSize(300, 300);
+      frame.setVisible(true);
+      frame.setResizable(false);
+      
+      JLabel label = new JLabel("созданно кем-то");
+      getContentPane().add(label);
+      pack();
+    }
+  }
+}
